@@ -8,6 +8,7 @@ class FlatAdmin(admin.ModelAdmin):
     search_fields = ['town', 'address', 'owner']
     readonly_fields = ['created_at']
     list_filter = ('new_building', 'rooms_number', 'has_balcony')
+    raw_id_fields = ('likes',)
 
 admin.site.register(Flat, FlatAdmin)
 
