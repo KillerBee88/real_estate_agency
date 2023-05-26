@@ -15,6 +15,6 @@ admin.site.register(Flat, FlatAdmin)
 class ComplaintAdmin(admin.ModelAdmin):
     list_display = ('user', 'flat', 'text')
     search_fields = ['user__username', 'flat__address', 'text']
-    raw_id_fields = ('flat',)  # это поле будет использоваться для поиска квартиры, а не для отображения полного списка
+    raw_id_fields = ('flat',)
 
 admin.site.register(Complaint, ComplaintAdmin)
