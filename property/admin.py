@@ -1,5 +1,13 @@
 from django.contrib import admin
-from .models import Flat, Complaint
+from .models import Flat, Complaint, Owner
+
+
+class OwnerAdmin(admin.ModelAdmin):
+    list_display = ('full_name', 'phonenumber', 'normalized_phonenumber')
+    search_fields = ['full_name', 'phonenumber', 'normalized_phonenumber']
+    raw_id_fields = ('flats',)
+
+admin.site.register(Owner, OwnerAdmin)
 
 
 class FlatAdmin(admin.ModelAdmin):
