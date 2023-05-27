@@ -56,12 +56,14 @@ class Flat(models.Model):
         default=None,
         db_index=True)
     likes = models.ManyToManyField(User, related_name='liked_flats', blank=True)
+    owner_normalized_phone = PhoneNumberField('Нормальный номер владельца', blank=True, null=True)
+
    
 
     def clean(self):
             if self.owners_phonenumber:
                 try:
-                    phone_number = phonenumbers.parse(self.owners_phonenumber, None)
+                    phone_number = phonenumbers.parse(self.owners_phonenumber, 'RU')
                     if not phonenumbers.is_valid_number(phone_number):
                         raise ValidationError("The phone number entered is not valid.")
                 except phonenumbers.phonenumberutil.NumberParseException:
