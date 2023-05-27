@@ -10,13 +10,19 @@ class OwnerAdmin(admin.ModelAdmin):
 admin.site.register(Owner, OwnerAdmin)
 
 
+class FlatInline(admin.TabularInline):
+    model = Flat.owners.through
+    raw_id_fields = ('flat',)
+
+
 class FlatAdmin(admin.ModelAdmin):
     list_display = ('address', 'price', 'new_building', 'construction_year', 'town', 'owners_phonenumber', 'owner_normalized_phone')
     list_editable = ('new_building',)
-    search_fields = ['town', 'address', 'owner']
+    search_fields = ['town', 'address', 'owners__full_name']
     readonly_fields = ['created_at']
     list_filter = ('new_building', 'rooms_number', 'has_balcony')
     raw_id_fields = ('likes',)
+    inlines = [FlatInline]
 
 admin.site.register(Flat, FlatAdmin)
 
