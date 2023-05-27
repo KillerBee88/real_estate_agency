@@ -1,11 +1,14 @@
 from django.db import models
 from django.utils import timezone
 from django.contrib.auth.models import User
+from django.core.exceptions import ValidationError
+from phonenumber_field.modelfields import PhoneNumberField
+import phonenumbers
 
 
 class Flat(models.Model):
     owner = models.CharField('ФИО владельца', max_length=200)
-    owners_phonenumber = models.CharField('Номер владельца', max_length=20)
+    owners_phonenumber = models.CharField('Номер владельца', max_length=20, blank=True, null=True)
     created_at = models.DateTimeField(
         'Когда создано объявление',
         default=timezone.now,
@@ -53,7 +56,17 @@ class Flat(models.Model):
         default=None,
         db_index=True)
     likes = models.ManyToManyField(User, related_name='liked_flats', blank=True)
-    
+   
+
+    def clean(self):
+            if self.owners_phonenumber:
+                try:
+                    phone_number = phonenumbers.parse(self.owners_phonenumber, None)
+                    if not phonenumbers.is_valid_number(phone_number):
+                        raise ValidationError("The phone number entered is not valid.")
+                except phonenumbers.phonenumberutil.NumberParseException:
+                    raise ValidationError("The phone number entered is not valid.")
+
 
     def __str__(self):
         return f'{self.town}, {self.address} ({self.price}р.)'
