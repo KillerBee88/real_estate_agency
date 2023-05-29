@@ -8,8 +8,6 @@ class OwnerAdmin(admin.ModelAdmin):
     search_fields = ['full_name', 'phonenumber', 'normalized_phonenumber']
     raw_id_fields = ('flats',)
 
-admin.site.register(Owner, OwnerAdmin)
-
 
 class FlatInline(admin.TabularInline):
     model = Flat.owners.through
@@ -26,13 +24,9 @@ class FlatAdmin(admin.ModelAdmin):
     raw_id_fields = ('likes',)
     inlines = [FlatInline]
 
-admin.site.register(Flat, FlatAdmin)
-
 
 @admin.register(Complaint)
 class ComplaintAdmin(admin.ModelAdmin):
     list_display = ('user', 'flat', 'text')
     search_fields = ['user__username', 'flat__address', 'text']
     raw_id_fields = ('flat',)
-
-admin.site.register(Complaint, ComplaintAdmin)
