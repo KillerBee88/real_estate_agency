@@ -6,12 +6,6 @@ from .models import Flat, Complaint, Owner
 class OwnerAdmin(admin.ModelAdmin):
     list_display = ('full_name', 'phonenumber', 'normalized_phonenumber')
     search_fields = ['full_name', 'phonenumber', 'normalized_phonenumber']
-    raw_id_fields = ('flats',)
-
-
-class FlatInline(admin.TabularInline):
-    model = Flat.owners.through
-    raw_id_fields = ('flat',)
 
 
 @admin.register(Flat)
@@ -22,7 +16,6 @@ class FlatAdmin(admin.ModelAdmin):
     readonly_fields = ['created_at']
     list_filter = ('new_building', 'rooms_number', 'has_balcony')
     raw_id_fields = ('likes',)
-    inlines = [FlatInline]
 
 
 @admin.register(Complaint)
