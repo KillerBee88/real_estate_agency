@@ -6,9 +6,18 @@ from phonenumber_field.modelfields import PhoneNumberField
 import phonenumbers
 
 
+class Owner(models.Model):
+    full_name = models.CharField('ФИО владельца', max_length=200)
+    phonenumber = PhoneNumberField('Номер владельца', blank=True, null=True)
+    normalized_phonenumber = PhoneNumberField('Нормализованный номер владельца', blank=True, null=True)
+
+    class Meta:
+        verbose_name = 'Владелец'
+        verbose_name_plural = 'Владельцы'
+
+
 class Flat(models.Model):
-    owner = models.CharField('ФИО владельца', max_length=200)
-    owners_phonenumber = models.CharField('Номер владельца', max_length=20, blank=True, null=True)
+    owners = models.ForeignKey(Owner, on_delete=models.CASCADE, related_name='flats', null=True)
     created_at = models.DateTimeField(
         'Дата создания объявления',
         default=timezone.now,
@@ -56,7 +65,6 @@ class Flat(models.Model):
         default=None,
         db_index=True)
     likes = models.ManyToManyField(User, related_name='liked_flats', blank=True, verbose_name='Лайки')
-    owner_normalized_phone = PhoneNumberField('Нормализованный номер владельца', blank=True, null=True)
 
     class Meta:
         verbose_name = 'Квартира'
@@ -85,24 +93,9 @@ class Complaint(models.Model):
         default=timezone.now,
         db_index=True)
 
+    def __str__(self):
+        return f"Жалоба от {self.user.username} на объявление {self.flat.id}"
+
     class Meta:
         verbose_name = 'Жалоба'
         verbose_name_plural = 'Жалобы'
-
-
-class Owner(models.Model):
-    full_name = models.CharField("ФИО", max_length=255)
-    phonenumber = models.CharField("Номер телефона", max_length=15)
-    normalized_phonenumber = models.CharField("Нормализованный номер телефона", max_length=15)
-    flats = models.ManyToManyField(Flat, related_name="owners", verbose_name="Квартиры")
-
-    class Meta:
-        verbose_name = "Собственник"
-        verbose_name_plural = "Собственники"
-
-    def __str__(self):
-        return self.full_name
-
-    def save(self, *args, **kwargs):
-        self.normalized_phonenumber = self.phonenumber.replace('(', '').replace(')', '').replace('-', '').replace(' ', '')
-        super().save(*args, **kwargs)
