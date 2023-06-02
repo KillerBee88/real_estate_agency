@@ -9,12 +9,12 @@ def convert_phone_numbers(apps, schema_editor):
     Owner = apps.get_model('property', 'Owner')
     for flat in Flat.objects.iterator():
         try:
-            owner = Owner.objects.get_or_create(
+            owner, created = Owner.objects.get_or_create(
                 full_name=flat.owner,
                 phonenumber=flat.owners_phonenumber,
                 normalized_phonenumber=phonenumbers.format_number(
-                    phonenumbers.parse(flat.owners_phonenumber, 'RU'),
-                    phonenumbers.PhoneNumberFormat.E164
+                phonenumbers.parse(flat.owners_phonenumber, 'RU'),
+                phonenumbers.PhoneNumberFormat.E164
                 ),
             )
             owner.flats.add(flat)
